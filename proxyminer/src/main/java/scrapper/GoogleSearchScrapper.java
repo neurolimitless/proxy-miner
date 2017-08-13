@@ -1,5 +1,6 @@
 package scrapper;
 
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 public class GoogleSearchScrapper implements WebScrapper {
 
   private PageScrapper pageScrapper = new PageScrapper();
+  private static final Logger log = Logger.getLogger(GoogleSearchScrapper.class);
 
   public List<String> parsePageListByQuery(String searchQuery) throws IOException {
     String query = formatQuery(searchQuery);
@@ -17,6 +19,7 @@ public class GoogleSearchScrapper implements WebScrapper {
     List<String> pages = searchPage.getElementsByClass("rc").stream()
         .map(element -> element.getElementsByTag("a").attr("href"))
         .collect(Collectors.toList());
+    log.info("Extracted "+pages.size()+" from query search: '"+query+"'");
     return pages;
   }
 

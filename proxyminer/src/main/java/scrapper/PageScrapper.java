@@ -1,5 +1,6 @@
 package scrapper;
 
+import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PageScrapper {
+
+  private static final Logger log = Logger.getLogger(PageScrapper.class);
 
   public List<String> parsePageTables(Document document) {
     Elements rows = document.getElementsByTag("tr");
