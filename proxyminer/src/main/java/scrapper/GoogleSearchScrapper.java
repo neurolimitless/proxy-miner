@@ -19,7 +19,7 @@ public class GoogleSearchScrapper implements WebScrapper {
     List<String> pages = searchPage.getElementsByClass("rc").stream()
         .map(element -> element.getElementsByTag("a").attr("href"))
         .collect(Collectors.toList());
-    log.info("Extracted "+pages.size()+" from query search: '"+query+"'");
+    log.info("Extracted " + pages.size() + " from query search: '" + searchQuery + "'");
     return pages;
   }
 

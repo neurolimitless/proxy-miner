@@ -41,9 +41,9 @@ public class ProxyInfo {
   @Override
   public String toString() {
     return "ProxyInfo{" +
-        "proxyHost='" + proxyHost + '\'' +
-        ", port=" + port +
-        ", isAlive=" + isAlive +
+        "Host: '" + proxyHost + '\'' +
+        ", port: '" + port +
+        "', is alive=" + isAlive +
         ", ping=" + ping +
         '}';
   }

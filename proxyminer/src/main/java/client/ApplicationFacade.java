@@ -1,3 +1,5 @@
+package client;
+
 import analyzer.ProxyAnalyzer;
 import analyzer.ProxyInfo;
 import org.apache.log4j.Logger;
@@ -5,17 +7,18 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import scrapper.GoogleSearchScrapper;
 import scrapper.util.Constants;
+import util.FileSaver;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ApplicationFacade {
 
-  private static FileSaver fileSaver = new FileSaver();
+  protected static FileSaver fileSaver = new FileSaver();
+  protected static List<ProxyInfo> aliveProxies = new CopyOnWriteArrayList<>();
   private static GoogleSearchScrapper proxyScrapper = new GoogleSearchScrapper();
   private static ProxyAnalyzer proxyAnalyzer = new ProxyAnalyzer();
   private static final Logger log = Logger.getLogger(ApplicationFacade.class);
@@ -36,14 +39,20 @@ public class ApplicationFacade {
       parsedIps.addAll(ips);
     });
     log.info("Checking for alive proxies.");
-    List<ProxyInfo> aliveProxies = parsedIps.stream()
-        .map(proxy -> proxyAnalyzer.checkProxy(proxy))
-        .filter(Objects::nonNull)
-        .filter(ProxyInfo::isAlive)
-        .collect(Collectors.toList());
+    System.err.println("Available commands: 'save', 'save asc' ");
+    new UserConsoleThread().start();
+    parsedIps.parallelStream().forEach(proxy -> {
+      ProxyInfo checkedProxy = proxyAnalyzer.checkProxy(proxy);
+      if (checkedProxy != null && checkedProxy.isAlive()) {
+        aliveProxies.add(checkedProxy);
+        System.out.println(checkedProxy);
+      }
+    });
     System.out.println(parsedIps.size() + " proxies totally parsed.");
     System.out.println(aliveProxies.size() + " proxies are alive.");
-    aliveProxies.forEach(System.out::println);
-    fileSaver.saveToFile(parsedIps);
+  }
+
+  public static List<ProxyInfo> getAliveProxies() {
+    return aliveProxies;
   }
 }

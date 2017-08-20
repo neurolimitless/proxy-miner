@@ -1,3 +1,7 @@
+package util;
+
+import analyzer.ProxyInfo;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -5,6 +9,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FileSaver {
 
@@ -27,6 +33,15 @@ public class FileSaver {
     });
     writer.close();
     System.out.println("Successfully saved.");
+  }
+
+  public void saveToFile(List<ProxyInfo> proxyInfoList) {
+    List<String> proxyToSave = proxyInfoList.stream().map(proxyInfo -> proxyInfo.getProxyHost() + ":" + proxyInfo.getPort()).collect(Collectors.toList());
+    try {
+      saveToFile(proxyToSave);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
 }

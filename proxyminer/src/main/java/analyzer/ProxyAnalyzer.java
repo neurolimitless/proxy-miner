@@ -30,7 +30,7 @@ public class ProxyAnalyzer {
       proxyInfo.setPing(ping);
       return proxyInfo;
     } catch (IOException e) {
-      log.error(e.getMessage());
+      log.error(e.getMessage() + " " + host + ":" + port);
       return null;
     }
   }
