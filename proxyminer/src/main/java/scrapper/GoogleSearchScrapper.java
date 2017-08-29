@@ -5,6 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,20 @@ public class GoogleSearchScrapper implements WebScrapper {
         .collect(Collectors.toList());
     log.info("Extracted " + pages.size() + " from query search: '" + searchQuery + "'");
     return pages;
+  }
+
+  public List<String> generatePageUrlsByQuery(String query, int pageCount) {
+    String searchQuery = formatQuery(query);
+    List<String> pageUrls = new ArrayList<>();
+    StringBuilder pageUrlBuilder;
+    for (int i = 0; i < pageCount; i++) {
+      pageUrlBuilder = new StringBuilder("https://www.google.com/search?q=").append(searchQuery);
+      if (i != 0) {
+        pageUrlBuilder.append("&start=").append(i * 10);
+      }
+      pageUrls.add(pageUrlBuilder.toString());
+    }
+    return pageUrls;
   }
 
   private String formatQuery(String searchQuery){

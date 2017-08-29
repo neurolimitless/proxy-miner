@@ -1,0 +1,9 @@
+0. Add multi page parsing. v0.11
+1. Add proxy parsing without checking v0.12
+2. Optimize checking algorithm v0.13
+3. Write tests for analyzer
+4. Add more commands v0.20
+* Add Yahoo / Bing / Duckduckgo search engine parser. v0.30
+* Improve analyzer (detection of country, etc.) v0.40
+5. Create GUI v1.0
+6. Add database module with repository analyzer v2.0

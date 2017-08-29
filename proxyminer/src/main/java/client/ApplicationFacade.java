@@ -50,6 +50,8 @@ public class ApplicationFacade {
     });
     System.out.println(parsedIps.size() + " proxies totally parsed.");
     System.out.println(aliveProxies.size() + " proxies are alive.");
+    fileSaver.saveToFile(aliveProxies);
+    System.out.println("Successfully saved to file.");
   }
 
   public static List<ProxyInfo> getAliveProxies() {

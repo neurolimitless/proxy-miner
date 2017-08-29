@@ -1,6 +1,7 @@
 package analyzer;
 
 import org.apache.log4j.Logger;
+import scrapper.util.Constants;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -11,6 +12,23 @@ import java.net.URLConnection;
 public class ProxyAnalyzer {
 
   private static final Logger log = Logger.getLogger(ProxyAnalyzer.class);
+  private String checkUrl;
+
+  public ProxyAnalyzer() {
+    checkUrl = Constants.GOOGLE_CHECK_URL;
+  }
+
+  public ProxyAnalyzer(String checkUrl) {
+    this.checkUrl = checkUrl;
+  }
+
+  public String getCheckUrl() {
+    return checkUrl;
+  }
+
+  public void setCheckUrl(String checkUrl) {
+    this.checkUrl = checkUrl;
+  }
 
   public ProxyInfo checkProxy(String proxyIp) {
     String[] proxyData = parseProxyString(proxyIp);
@@ -18,7 +36,7 @@ public class ProxyAnalyzer {
     int port = Integer.parseInt(proxyData[1]);
     Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
     try {
-      URL url = new URL("http://www.google.com");
+      URL url = new URL(checkUrl);
       long timestamp = System.currentTimeMillis();
       URLConnection http = url.openConnection(proxy);
       http.connect();
