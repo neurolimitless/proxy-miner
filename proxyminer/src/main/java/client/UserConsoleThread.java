@@ -10,18 +10,16 @@ import java.util.Scanner;
 
 public class UserConsoleThread extends Thread {
 
+  private Scanner scanner = new Scanner(System.in);
   private static final Logger log = Logger.getLogger(UserConsoleThread.class);
   private volatile boolean isRunning = true;
 
   @Override
   public void run() {
     while (isRunning) {
-      Scanner scanner = new Scanner(System.in);
-      while (isRunning) {
-        String input = scanner.nextLine();
-        if (input != null) {
-          executeCommand(input);
-        }
+      String input = scanner.nextLine();
+      if (input != null) {
+        executeCommand(input);
       }
     }
   }

@@ -14,17 +14,34 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 public class ApplicationFacade {
 
-  protected static FileSaver fileSaver = new FileSaver();
-  protected static List<ProxyInfo> aliveProxies = new CopyOnWriteArrayList<>();
-  private static GoogleSearchScrapper proxyScrapper = new GoogleSearchScrapper();
-  private static ProxyAnalyzer proxyAnalyzer = new ProxyAnalyzer();
   private static final Logger log = Logger.getLogger(ApplicationFacade.class);
 
+  protected static List<ProxyInfo> aliveProxies = new CopyOnWriteArrayList<>();
+  protected static FileSaver fileSaver = new FileSaver();
+  private static GoogleSearchScrapper googleSearchScrapper = new GoogleSearchScrapper();
+  private static ProxyAnalyzer proxyAnalyzer = new ProxyAnalyzer();
+
   public static void main(String[] args) throws IOException {
-    List<String> proxyPages = proxyScrapper.parsePageListByQuery("proxy list");
+    String query = Constants.DEFAULT_QUERY;
+    int pageCount = Constants.DEFAULT_PAGE_COUNT;
+    if (args.length == 2) {
+      try {
+        pageCount = Integer.parseInt(args[1]);
+        query = args[0];
+      } catch (NumberFormatException e) {
+        log.warn("Second argument is invalid number [" + args[1] + "], using default values.");
+      }
+    } else {
+      log.info("Using default values. Query: '" + query + "', page count to parse = " + pageCount);
+    }
+    List<String> pageUrlsByQuery = googleSearchScrapper.generatePageUrlsByQuery(query, pageCount);
+    List<String> proxyPages = pageUrlsByQuery.stream()
+        .map(url -> googleSearchScrapper.parsePageListByUrl(url))
+        .flatMap(List::stream).collect(Collectors.toList());
     Set<String> parsedIps = new HashSet<>();
     proxyPages.forEach(pageUrl -> {
       Document document = null;
@@ -35,7 +52,7 @@ public class ApplicationFacade {
         e.printStackTrace();
       }
       System.out.println("Extracting IP's...");
-      List<String> ips = proxyScrapper.extractProxyIpsFromPage(document);
+      List<String> ips = googleSearchScrapper.extractProxyIpsFromPage(document);
       parsedIps.addAll(ips);
     });
     log.info("Checking for alive proxies.");

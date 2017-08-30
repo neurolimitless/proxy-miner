@@ -2,9 +2,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Test;
 import scrapper.GoogleSearchScrapper;
+import scrapper.util.Constants;
+import scrapper.util.Patterns;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertTrue;
 
@@ -14,13 +18,17 @@ public class GoogleSearchScrapperTest {
 
   @Test
   public void parsePagesFromSearch() throws IOException {
-    List<String> proxy = googleSearchScrapper.parsePageListByQuery("proxy list");
+    String query = Constants.DEFAULT_QUERY;
+    List<String> pageUrlsByQuery = googleSearchScrapper.generatePageUrlsByQuery(query, 1);
+    List<String> proxy = googleSearchScrapper.parsePageListByUrl(pageUrlsByQuery.get(0));
     assertTrue(proxy != null && proxy.size() == 10);
   }
 
   @Test
   public void extractProxyIpsFromPages() throws IOException {
-    List<String> pages = googleSearchScrapper.parsePageListByQuery("proxy list");
+    String query = Constants.DEFAULT_QUERY;
+    List<String> pageUrlsByQuery = googleSearchScrapper.generatePageUrlsByQuery(query, 1);
+    List<String> pages = googleSearchScrapper.parsePageListByUrl(pageUrlsByQuery.get(0));
     pages.parallelStream().forEach(page -> {
       try {
         System.out.println(page);
@@ -34,16 +42,17 @@ public class GoogleSearchScrapperTest {
     });
   }
 
-  //TODO: Write a valid test without hardcoded proxy.
-//  @Test
-//  public void patternTest(){
-//    Pattern portPattern = Pattern.compile("^(\\d{2,})$");
-//    Pattern ipWithoutPortPattern = Pattern.compile(  "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
-//    Matcher matcher = ipWithoutPortPattern.matcher("172.21.33.241");
-//    Matcher matcherTwo = portPattern.matcher("8080");
-//    assertTrue(matcher.matches());
-//    assertTrue(matcherTwo.matches());
-//  }
+  @Test
+  public void patternTest() {
+    String exampleIp = "172.21.33.241";
+    String examplePort = "8080";
+    Pattern portPattern = Patterns.IP_WITHOUT_PORT;
+    Pattern ipWithoutPortPattern = Patterns.PORT;
+    Matcher matcher = ipWithoutPortPattern.matcher(exampleIp);
+    Matcher matcherTwo = portPattern.matcher(examplePort);
+    assertTrue(matcher.matches());
+    assertTrue(matcherTwo.matches());
+  }
 
   @Test
   public void pageTableScrapping() throws IOException {

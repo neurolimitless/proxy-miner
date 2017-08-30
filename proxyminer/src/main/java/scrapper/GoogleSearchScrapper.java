@@ -14,13 +14,17 @@ public class GoogleSearchScrapper implements WebScrapper {
   private PageScrapper pageScrapper = new PageScrapper();
   private static final Logger log = Logger.getLogger(GoogleSearchScrapper.class);
 
-  public List<String> parsePageListByQuery(String searchQuery) throws IOException {
-    String query = formatQuery(searchQuery);
-    Document searchPage = Jsoup.connect("https://www.google.com/search?q="+query).get();
-    List<String> pages = searchPage.getElementsByClass("rc").stream()
-        .map(element -> element.getElementsByTag("a").attr("href"))
-        .collect(Collectors.toList());
-    log.info("Extracted " + pages.size() + " from query search: '" + searchQuery + "'");
+  public List<String> parsePageListByUrl(String url) {
+    List<String> pages = null;
+    try {
+      Document searchPage = Jsoup.connect(url).get();
+      pages = searchPage.getElementsByClass("rc").stream()
+          .map(element -> element.getElementsByTag("a").attr("href"))
+          .collect(Collectors.toList());
+      log.info("Extracted " + pages.size() + " from query search: '" + url + "'");
+    } catch (IOException e) {
+      log.warn(e);
+    }
     return pages;
   }
 

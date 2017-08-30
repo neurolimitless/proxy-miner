@@ -1,4 +1,5 @@
-0. Add multi page parsing. v0.11
+0. Add multi page parsing. v0.11 - Done
+
 1. Add proxy parsing without checking v0.12
 2. Optimize checking algorithm v0.13
 3. Write tests for analyzer

@@ -4,5 +4,5 @@ import java.io.IOException;
 import java.util.List;
 
 public interface WebScrapper {
-  List<String> parsePageListByQuery(String searchQuery) throws IOException;
+  List<String> parsePageListByUrl(String url) throws IOException;
 }
